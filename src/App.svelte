@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Toast from './lib/Toast.svelte';
 
   let types = [
     { name: "Bug", symbol: "ഋ", alternates: "⁂ප" },
@@ -22,14 +23,29 @@
   ];
   
 
+  let showToast = false;
+  let toastMessage = "";
+  let toastType = "info"; // Options: "info", "success", "error"
+
   async function copyToClipboard(event) {
+    let success = false;
+
     try {
-      const value = event.target.value; // Access the input value
+      const value = event.target.value;
       await navigator.clipboard.writeText(value);
-      alert("Copied to clipboard!");
-    } catch (err) {
-      console.error("Failed to copy: ", err);
+      success = true;
+    } catch (error) {
+      console.error("Failed to copy to clipboard", error);
     }
+
+    toastMessage = success ? "Copied to clipboard!" : "Failed to copy to clipboard";
+    toastType = success ? "success" : "error";
+    showToast = true;
+
+    // Hide toast after a delay
+    setTimeout(() => {
+      showToast = false;
+    }, 3000);
   }
 
 </script>
@@ -38,6 +54,11 @@
   <h1>Pogo Paste</h1>
 
   <h2>Types</h2>
+
+  {#if showToast}
+    <Toast message={toastMessage} type={toastType} />
+  {/if}
+
   <table>
     <tbody>
       {#each types as { name, symbol }}
@@ -54,5 +75,19 @@
 </main>
 
 <style>
-
+input[type="button"] {
+  width: 40px;
+  height: 21px;
+  background: white;
+  border: 1px solid black;
+  border-radius: 4px;
+  display: flex;
+  place-items: center;
+}
+tr {
+  margin-top: 2px;
+}
+td + td {
+  padding-left: 8px;
+}
 </style>
