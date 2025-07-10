@@ -24,7 +24,7 @@ permalink: index.html
             </td></tr>
             {% for item in group.items %}
                 <tr>
-                <td>{{ item.name }}</td>
+                <td class="{{item.className}}">{{ item.name }}</td>
                 <td class="copy-btn-cell">
                     <input type="button" value="{{ item.symbol }}" class="copy-btn" />
                 </td>
