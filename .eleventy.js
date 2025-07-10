@@ -1,12 +1,10 @@
 // .eleventy.js (ES module version)
 export default function(eleventyConfig) {
-  eleventyConfig.addPassthroughCopy("style.css");
-  eleventyConfig.addPassthroughCopy("script.js");
+  eleventyConfig.addPassthroughCopy("static");
 
-eleventyConfig.addGlobalData("symbols", async () => {
-  const data = await import("./symbols.json", { assert: { type: "json" } });
-  return data.default;
-});
+  eleventyConfig.addGlobalData("symbols", () => import("./symbols.json", { assert: { type: "json" } }).then(m => m.default));
+
+
   return {
     dir: {
       input: ".",

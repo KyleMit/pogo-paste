@@ -8,7 +8,8 @@ permalink: index.html
 <head>
   <meta charset="UTF-8">
   <title>Pogo Paste</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧢</text></svg>">
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <main>
@@ -24,7 +25,12 @@ permalink: index.html
             </td></tr>
             {% for item in group.items %}
                 <tr>
-                <td class="{{item.className}}">{{ item.name }}</td>
+                <td class="{{item.className}}">
+                    {% if item.icon %}
+                        <img src="/static/images/{{ item.icon }}" alt="{{ item.name }} icon" class="type-icon">
+                    {% endif %}
+                    {{ item.name }}
+                </td>
                 <td class="copy-btn-cell">
                     <input type="button" value="{{ item.symbol }}" class="copy-btn" />
                 </td>
@@ -35,6 +41,6 @@ permalink: index.html
     </table>
   </main>
 
-  <script src="/script.js"></script>
+  <script src="/static/script.js"></script>
 </body>
 </html>
