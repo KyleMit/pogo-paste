@@ -1,15 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
+
+.archivo-black-regular {
+  font-family: "Archivo Black", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+body, main {
+  margin: 0;
+  padding: 1rem;
+  font-family: sans-serif;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-size: 1.1em;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  background: #eef4ff29;
+}
+
+.pokemon-text {
+  font-size: 42px;
+  color: #ffff24;
+  -webkit-text-stroke: 1.5px #5050e1; /* Blue border */
+  text-stroke: 1.5px #5050e1; /* Firefox */
+  font-weight: bold;
+}
+
 .copy-btn {
   width: 40px;
-  height: 21px;
-  background: white;
-  border: 1px solid black;
+  height: 25px;
+  background: #eff5f88f;
+  border: 1px solid #030738;
   border-radius: 4px;
   display: flex;
   place-items: center;
 }
+.copy-btn:hover,.copy-btn:focus,.copy-btn:active {
+  background: #daf1fc8f;
+}
 
 td {
   padding: 2px;
+}
+
+.type-cell {
+  width: 133px;
 }
 
 .copy-btn-cell {
@@ -106,8 +144,15 @@ td {
   align-items: center;
   justify-content: space-evenly;
   padding: 2px;
+  width: 100%;
+}
+
+.type-container {
+    display: flex;
+    place-items: center;
+    gap: 4px;
 }
 
 td img {
-    height: 14px;
+    height: 20px;
 }

@@ -7,13 +7,22 @@ permalink: index.html
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pogo Paste</title>
+  <title>PoGo Paste</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧢</text></svg>">
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- capture the CSS content as a Nunjucks variable -->
+  {% set css %} {% include "style.css" %} {% endset %}
+  <!-- output in style tag -->
+  <style type="text/css">
+    {{ css | safe }}
+  </style>
 </head>
 <body>
   <main>
-    <h1>Pogo Paste</h1>
+    <h1 class="pokemon-text archivo-black-regular">PoGo Paste</h1>
 
     <div id="toast" class="toast hidden"></div>
 
@@ -21,15 +30,19 @@ permalink: index.html
       <tbody>
         {% for group in collections.all[0].data.symbols %}
             <tr><td colspan="2">
-                <h2>{{ group.name }}</h2>
+                <h2 class="archivo-black-regular">{{ group.name }}</h2>
             </td></tr>
             {% for item in group.items %}
                 <tr>
-                <td class="{{item.className}}">
-                    {% if item.icon %}
-                        <img src="/static/images/{{ item.icon }}" alt="{{ item.name }} icon" class="type-icon">
-                    {% endif %}
-                    {{ item.name }}
+                <td class="type-cell">
+                    <div class="type-container">
+                      {% if item.icon %}
+                          <img src="/static/images/{{ item.icon }}" alt="{{ item.name }} icon" class="type-icon">
+                      {% endif %}
+                      <div class="{{item.className}}" >
+                        {{ item.name }}
+                      </div>
+                    </div>
                 </td>
                 <td class="copy-btn-cell">
                     <input type="button" value="{{ item.symbol }}" class="copy-btn" />
@@ -41,6 +54,11 @@ permalink: index.html
     </table>
   </main>
 
-  <script src="/static/script.js"></script>
+  <!-- capture the JS content as a Nunjucks variable -->
+  {% set js %} {% include "script.js" %} {% endset %}
+  <!-- output in script tag -->
+  <script type="text/javascript">
+    {{ js | safe }}
+  </script>
 </body>
 </html>
