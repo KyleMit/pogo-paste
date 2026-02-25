@@ -1,6 +1,6 @@
 // .eleventy.js (ES module version)
 export default function(eleventyConfig) {
-  eleventyConfig.addPassthroughCopy("static");
+  eleventyConfig.addPassthroughCopy("src/static");
 
   return {
     dir: {

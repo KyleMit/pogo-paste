@@ -1,8 +1,35 @@
 // Cache DOM elements for better performance
 const toast = document.getElementById("toast");
 const cardsContainer = document.querySelector('.cards-container');
+const viewToggle = document.querySelector('.view-toggle');
 
 let toastTimeout;
+
+// View mode management
+const VIEW_MODE_KEY = 'pogo-paste-view-mode';
+
+const setViewMode = (mode) => {
+  if (mode === 'grid') {
+    document.body.classList.add('grid-view');
+  } else {
+    document.body.classList.remove('grid-view');
+  }
+
+  localStorage.setItem(VIEW_MODE_KEY, mode);
+};
+
+const loadViewMode = () => {
+  const savedMode = localStorage.getItem(VIEW_MODE_KEY) || 'list';
+  setViewMode(savedMode);
+};
+
+// Single view toggle event listener
+viewToggle.addEventListener('click', (event) => {
+  const btn = event.target.closest('.view-btn');
+  if (btn && btn.dataset.view) {
+    setViewMode(btn.dataset.view);
+  }
+});
 
 const showToast = (message, type = "info") => {
   // Clear existing timeout to prevent overlapping toasts
@@ -31,3 +58,6 @@ cardsContainer.addEventListener('click', (event) => {
     copyToClipboard(event.target);
   }
 });
+
+// Initialize on page load
+loadViewMode();

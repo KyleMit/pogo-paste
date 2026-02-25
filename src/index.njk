@@ -18,7 +18,17 @@ permalink: index.html
 
     <div id="toast" class="toast hidden"></div>
 
-    <div class="cards-container">
+    <div class="content-wrapper">
+      <div class="view-toggle">
+        <button id="listViewBtn" class="view-btn" data-view="list" aria-label="List view">
+          {% include "list-view.svg" %}
+        </button>
+        <button id="gridViewBtn" class="view-btn" data-view="grid" aria-label="Grid view">
+          {% include "grid-view.svg" %}
+        </button>
+      </div>
+
+      <div class="cards-container">
       {% for group in symbols %}
         <div class="symbol-card">
           <h2 class="archivo-black-regular">{{ group.name }}</h2>
@@ -51,6 +61,7 @@ permalink: index.html
           {% endif %}
         </div>
       {% endfor %}
+      </div>
     </div>
   </main>
 
