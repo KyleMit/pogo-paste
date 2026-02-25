@@ -2,12 +2,12 @@
 export default function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("static");
 
-  eleventyConfig.addGlobalData("symbols", () => import("./symbols.json", { assert: { type: "json" } }).then(m => m.default));
+  eleventyConfig.addGlobalData("symbols", () => import("./src/symbols.json", { with: { type: "json" } }).then(m => m.default));
 
 
   return {
     dir: {
-      input: ".",
+      input: "src",
       output: "_site"
     }
   };
