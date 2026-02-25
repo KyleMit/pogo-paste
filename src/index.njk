@@ -13,12 +13,7 @@ permalink: index.html
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- capture the CSS content as a Nunjucks variable -->
-  {% set css %} {% include "style.css" %} {% endset %}
-  <!-- output in style tag -->
-  <style type="text/css">
-    {{ css | safe }}
-  </style>
+  <style>{% include "style.css" %}</style>
 </head>
 <body>
   <main>
@@ -54,11 +49,6 @@ permalink: index.html
     </table>
   </main>
 
-  <!-- capture the JS content as a Nunjucks variable -->
-  {% set js %} {% include "script.js" %} {% endset %}
-  <!-- output in script tag -->
-  <script type="text/javascript">
-    {{ js | safe }}
-  </script>
+  <script>{% include "script.js" %}</script>
 </body>
 </html>
