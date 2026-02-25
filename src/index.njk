@@ -18,32 +18,32 @@ permalink: index.html
 
     <div id="toast" class="toast hidden"></div>
 
-    <table id="symbolsTable">
-      <tbody>
-        {% for group in symbols %}
-            <tr><td colspan="2">
-                <h2 class="archivo-black-regular">{{ group.name }}</h2>
-            </td></tr>
+    <div class="cards-container">
+      {% for group in symbols %}
+        <div class="symbol-card">
+          <h2 class="archivo-black-regular">{{ group.name }}</h2>
+          <div class="symbol-items">
             {% for item in group.items %}
-                <tr>
-                <td class="type-cell">
-                    <div class="type-container">
-                      {% if item.icon %}
-                          <img src="/static/images/{{ item.icon }}" alt="{{ item.name }} icon" class="type-icon">
-                      {% endif %}
-                      <div class="{{item.className}}" >
-                        {{ item.name }}
-                      </div>
+              <div class="symbol-row">
+                <div class="symbol-label">
+                  <div class="type-container">
+                    {% if item.icon %}
+                      <img src="/static/images/{{ item.icon }}" alt="{{ item.name }} icon" class="type-icon">
+                    {% endif %}
+                    <div class="{{item.className}}">
+                      {{ item.name }}
                     </div>
-                </td>
-                <td class="copy-btn-cell">
-                    <input type="button" value="{{ item.symbol }}" class="copy-btn" />
-                </td>
-                </tr>
+                  </div>
+                </div>
+                <div class="symbol-button">
+                  <input type="button" value="{{ item.symbol }}" class="copy-btn" />
+                </div>
+              </div>
             {% endfor %}
-        {% endfor %}
-      </tbody>
-    </table>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
   </main>
 
   <footer>
