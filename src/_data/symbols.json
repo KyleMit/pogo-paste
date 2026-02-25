@@ -37,6 +37,9 @@
         { "name": "XXS", "symbol": "↓", "alternates": "" },
         { "name": "Background", "symbol": "✺", "alternates": "❖" },
         { "name": "Adventure Effect", "symbol": "⏱", "alternates": "" },
+        { "name": "Costume", "symbol": "⛑", "alternates": "⧊⩠⟁⊛⍟" },
+        { "name": "Legacy", "symbol": "Ⓛ", "alternates": "" },
+        { "name": "Special Move", "symbol": "*", "alternates": "" },
         { "name": "Tamed", "symbol": "⊛", "alternates": "∅✱⊹⌯" }
     ]
   },
@@ -64,11 +67,22 @@
     ]
   },
   {
-    "name": "DMax Move Level",
+    "name": "DMax Move",
     "items": [
         { "name": "Attack", "symbol": "⚔", "alternates": "" },
         { "name": "Shield", "symbol": "⛨", "alternates": "" },
-        { "name": "Healing", "symbol": "♡", "alternates": "" }
+        { "name": "Healing", "symbol": "♡", "alternates": "" },
+        { "name": ".5s Fast Move", "symbol": "½", "alternates": "" }
+    ]
+  },
+   {
+    "name": "Form",
+    "items": [
+        { "name": "Night", "symbol": "☽", "alternates": "" },
+        { "name": "Day", "symbol": "☼", "alternates": "" },
+        { "name": "Dusk", "symbol": "◐", "alternates": "" },
+        { "name": "Male", "symbol": "♂", "alternates": "" },
+        { "name": "Female", "symbol": "♀", "alternates": "" }
     ]
   }
   

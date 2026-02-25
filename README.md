@@ -60,3 +60,4 @@ Triage
   * [Useful Pokemon search strings](https://www.reddit.com/r/TheSilphRoad/comments/netdv7)
   * [In search strings, what "& | , : ;" symbols really mean? And how to use them properly?](https://www.reddit.com/r/TheSilphRoad/comments/17okvx1)
   * [Search strings](https://www.reddit.com/r/TheSilphRoad/comments/1cc86tb)
+  * [leidwesen.github.io/SearchPhrases](https://leidwesen.github.io/SearchPhrases/)
