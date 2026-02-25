@@ -88,8 +88,7 @@ h2.archivo-black-regular {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 1rem 1.25rem;
-  width: fit-content;
-  min-width: 280px;
+  width: 260px;
 }
 
 .symbol-card h2 {
@@ -119,6 +118,20 @@ h2.archivo-black-regular {
   flex-shrink: 0;
   display: flex;
   justify-content: center;
+}
+
+.numbers-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 38px);
+  gap: 8px;
+  justify-content: center;
+  justify-items: center;
+}
+
+.numbers-btn {
+  width: 38px;
+  height: 38px;
+  font-size: 1.2em;
 }
 
 .toast {

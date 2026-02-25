@@ -23,19 +23,53 @@
     ]
   },
   {
-    "name": "Special",
-    "items": [
-        { "name": "XXL", "symbol": "↑", "alternates": "↟↗⇮⇑" },
-        { "name": "XXS", "symbol": "↓", "alternates": "" },
-        { "name": "Background", "symbol": "✺", "alternates": "❖" }
-    ]
-  },
-  {
     "name": "Stats",
     "items": [
         { "name": "Max Attack", "symbol": "ᴬ", "alternates": "ᵃ" },
         { "name": "Max Defense", "symbol": "ᴰ", "alternates": "ᵈ" },
         { "name": "Max Stamina", "symbol": "ᴴ", "alternates": "ʰ" }
     ]
+  },
+  {
+    "name": "Special",
+    "items": [
+        { "name": "XXL", "symbol": "↑", "alternates": "↟↗⇮⇑" },
+        { "name": "XXS", "symbol": "↓", "alternates": "" },
+        { "name": "Background", "symbol": "✺", "alternates": "❖" },
+        { "name": "Adventure Effect", "symbol": "⏱", "alternates": "" },
+        { "name": "Tamed", "symbol": "⊛", "alternates": "∅✱⊹⌯" }
+    ]
+  },
+  {
+    "name": "Numbers",
+    "items": [
+      { "name": "One", "symbol": "①", "alternates": "❶" },
+      { "name": "Two", "symbol": "②", "alternates": "❷" },
+      { "name": "Three", "symbol": "③", "alternates": "❸" },
+      { "name": "Four", "symbol": "④", "alternates": "❹" },
+      { "name": "Five", "symbol": "⑤", "alternates": "❺" },
+      { "name": "Six", "symbol": "⑥", "alternates": "❻" },
+      { "name": "Seven", "symbol": "⑦", "alternates": "❼" },
+      { "name": "Eight", "symbol": "⑧", "alternates": "❽" },
+      { "name": "Nine", "symbol": "⑨", "alternates": "❾" },
+      { "name": "Ten", "symbol": "⑩", "alternates": "❿" },
+      { "name": "Eleven", "symbol": "⑪", "alternates": "⓫" },
+      { "name": "Twelve", "symbol": "⑫", "alternates": "⓬" },
+      { "name": "Thirteen", "symbol": "⑬", "alternates": "⓭" },
+      { "name": "Fourteen", "symbol": "⑭", "alternates": "⓮" },
+      { "name": "Fifteen", "symbol": "⑮", "alternates": "⓯" },
+      { "name": "Zero", "symbol": "⓪", "alternates": "⓿" },
+      { "name": "Forty", "symbol": "㊵", "alternates": "" },
+      { "name": "Fifty", "symbol": "㊿", "alternates": "" }
+    ]
+  },
+  {
+    "name": "DMax Move Level",
+    "items": [
+        { "name": "Attack", "symbol": "⚔", "alternates": "" },
+        { "name": "Shield", "symbol": "⛨", "alternates": "" },
+        { "name": "Healing", "symbol": "♡", "alternates": "" }
+    ]
   }
+  
 ]

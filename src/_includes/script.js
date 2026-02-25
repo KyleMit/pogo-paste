@@ -1,29 +1,33 @@
-function showToast(message, type = "info") {
-  const toast = document.getElementById("toast");
+// Cache DOM elements for better performance
+const toast = document.getElementById("toast");
+const cardsContainer = document.querySelector('.cards-container');
+
+let toastTimeout;
+
+const showToast = (message, type = "info") => {
+  // Clear existing timeout to prevent overlapping toasts
+  if (toastTimeout) clearTimeout(toastTimeout);
+
   toast.textContent = message;
   toast.className = `toast ${type}`;
-  toast.classList.remove("hidden");
 
-  setTimeout(() => {
+  toastTimeout = setTimeout(() => {
     toast.classList.add("hidden");
   }, 3000);
-}
+};
 
-async function copyToClipboard(el) {
-  const value = el.value;
-
+const copyToClipboard = async (button) => {
   try {
-    await navigator.clipboard.writeText(value);
+    await navigator.clipboard.writeText(button.value);
     showToast("Copied to clipboard!", "success");
   } catch (error) {
-    showToast("Failed to copy to clipboard", "error");
+    showToast("Failed to copy", "error");
   }
-}
+};
 
-document.querySelector('.cards-container').addEventListener('click', function(event) {
-  const el = event.target;
-
-  if (el.classList.contains('copy-btn')) {
-    copyToClipboard(el);
+// Event delegation for better performance
+cardsContainer.addEventListener('click', (event) => {
+  if (event.target.classList.contains('copy-btn')) {
+    copyToClipboard(event.target);
   }
 });
