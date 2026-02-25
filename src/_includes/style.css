@@ -41,6 +41,7 @@ h1.pokemon-text {
   text-shadow: 2px 2px 0px #2a75bb;
   letter-spacing: 1px;
   margin: 0.5em 0 1em;
+  text-align: center;
 }
 
 h2.archivo-black-regular {
@@ -67,7 +68,6 @@ h2.archivo-black-regular {
 .copy-btn:hover {
   background: linear-gradient(180deg, #ffcb05 0%, #ffd54f 100%);
   border-color: #2a75bb;
-  transform: translateY(-1px);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 .copy-btn:active {

@@ -20,7 +20,7 @@ async function copyToClipboard(el) {
   }
 }
 
-document.getElementById('symbolsTable').addEventListener('click', function(event) {
+document.querySelector('.cards-container').addEventListener('click', function(event) {
   const el = event.target;
 
   if (el.classList.contains('copy-btn')) {
