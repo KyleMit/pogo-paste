@@ -56,6 +56,7 @@ body.section-search .content-wrapper {
   width: min(480px, 100%);
 }
 
+
 .toolbar {
   display: flex;
   justify-content: space-between;
@@ -101,17 +102,17 @@ body.section-search .content-wrapper {
 }
 
 /* Active states — body class drives highlight, data-toggle-value scopes to the right button */
-body:not(.grid-view) .view-btn[data-toggle-value="list"],
-body.grid-view .view-btn[data-toggle-value="grid"],
-body:not(.section-search) .section-btn[data-toggle-value="symbols"],
+body.view-list .view-btn[data-toggle-value="list"],
+body.view-grid .view-btn[data-toggle-value="grid"],
+body.section-symbols .section-btn[data-toggle-value="symbols"],
 body.section-search .section-btn[data-toggle-value="search"] {
   background: linear-gradient(180deg, #e8f4f8 0%, #d0e8f0 100%);
   border-color: #2a75bb;
 }
 
-body:not(.grid-view) .view-btn[data-toggle-value="list"] svg,
-body.grid-view .view-btn[data-toggle-value="grid"] svg,
-body:not(.section-search) .section-btn[data-toggle-value="symbols"] svg,
+body.view-list .view-btn[data-toggle-value="list"] svg,
+body.view-grid .view-btn[data-toggle-value="grid"] svg,
+body.section-symbols .section-btn[data-toggle-value="symbols"] svg,
 body.section-search .section-btn[data-toggle-value="search"] svg {
   opacity: 1;
 }
@@ -206,7 +207,7 @@ h2.archivo-black-regular {
 }
 
 /* Grid view mode for all sections except Numbers */
-body.grid-view .symbol-items {
+body.view-grid .symbol-items {
   display: grid;
   grid-template-columns: repeat(5, 38px);
   gap: 8px;
@@ -214,19 +215,19 @@ body.grid-view .symbol-items {
   justify-items: center;
 }
 
-body.grid-view .symbol-row {
+body.view-grid .symbol-row {
   display: contents;
 }
 
-body.grid-view .symbol-label {
+body.view-grid .symbol-label {
   display: none;
 }
 
-body.grid-view .symbol-button {
+body.view-grid .symbol-button {
   width: auto;
 }
 
-body.grid-view .copy-btn {
+body.view-grid .copy-btn {
   width: 38px;
   height: 38px;
   font-size: 1.2em;
@@ -339,10 +340,10 @@ body.grid-view .copy-btn {
 
 /* ── Section visibility ─────────────────────────────────────────────────── */
 
-body:not(.section-search) .symbols-container { display: flex; }
-body:not(.section-search) .search-container  { display: none; }
-body.section-search       .symbols-container { display: none; }
-body.section-search       .search-container  { display: flex; }
+body.section-symbols .symbols-container { display: flex; }
+body.section-symbols .search-container  { display: none; }
+body.section-search  .symbols-container { display: none; }
+body.section-search  .search-container  { display: flex; }
 
 /* ── Search section ─────────────────────────────────────────────────────── */
 
@@ -371,7 +372,7 @@ body.section-search       .search-container  { display: flex; }
   gap: 10px;
 }
 
-body.grid-view .search-items {
+body.view-grid .search-items {
   gap: 6px;
 }
 
@@ -441,20 +442,20 @@ body.grid-view .search-items {
 }
 
 /* Grid mode: show compact copy, hide code copy */
-body.grid-view .search-compact-copy {
+body.view-grid .search-compact-copy {
   display: flex;
 }
 
-body.grid-view .search-code-copy {
+body.view-grid .search-code-copy {
   display: none;
 }
 
-body.grid-view .search-item {
+body.view-grid .search-item {
   flex-direction: row;
   align-items: center;
 }
 
-body.grid-view .search-row {
+body.view-grid .search-row {
   flex: 1;
 }
 
