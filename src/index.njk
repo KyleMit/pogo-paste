@@ -23,8 +23,10 @@ permalink: index.html
 
     <div class="content-wrapper">
       {% include "views/toolbar.njk" %}
-      {% include "views/symbols-container.njk" %}
-      {% include "views/search-container.njk" %}
+      <div class="sections-viewport">
+        {% include "views/symbols-container.njk" %}
+        {% include "views/search-container.njk" %}
+      </div>
     </div>
   </main>
 

@@ -338,12 +338,57 @@ body.view-grid .copy-btn {
     height: 20px;
 }
 
+/* ── Sections viewport ──────────────────────────────────────────────────── */
+
+.sections-viewport {
+  position: relative;
+  overflow: hidden;
+}
+
 /* ── Section visibility ─────────────────────────────────────────────────── */
 
 body.section-symbols .symbols-container { display: flex; }
 body.section-symbols .search-container  { display: none; }
 body.section-search  .symbols-container { display: none; }
 body.section-search  .search-container  { display: flex; }
+
+/* ── Section slide animations ───────────────────────────────────────────── */
+
+@keyframes slide-in-from-right {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes slide-in-from-left {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes slide-out-to-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+
+@keyframes slide-out-to-right {
+  from { transform: translateX(0); }
+  to   { transform: translateX(100%); }
+}
+
+.section-entering,
+.section-exiting {
+  display: flex !important;
+}
+
+.section-exiting {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.section-entering.from-right { animation: slide-in-from-right 0.3s ease forwards; }
+.section-entering.from-left  { animation: slide-in-from-left  0.3s ease forwards; }
+.section-exiting.to-left     { animation: slide-out-to-left   0.3s ease forwards; }
+.section-exiting.to-right    { animation: slide-out-to-right  0.3s ease forwards; }
 
 /* ── Search section ─────────────────────────────────────────────────────── */
 
