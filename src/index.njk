@@ -21,16 +21,26 @@ permalink: index.html
     <div id="toast" class="toast hidden"></div>
 
     <div class="content-wrapper">
-      <div class="view-toggle">
-        <button id="listViewBtn" class="view-btn" data-view="list" aria-label="List view">
-          {% include "list-view.svg" %}
-        </button>
-        <button id="gridViewBtn" class="view-btn" data-view="grid" aria-label="Grid view">
-          {% include "grid-view.svg" %}
-        </button>
+      <div class="toolbar">
+        <div class="section-toggle">
+          <button class="section-btn" data-section="symbols" aria-label="Symbols view">
+            {% include "symbol.svg" %}
+          </button>
+          <button class="section-btn" data-section="search" aria-label="Search strings view">
+            {% include "search.svg" %}
+          </button>
+        </div>
+        <div class="view-toggle">
+          <button class="view-btn" data-view="list" aria-label="List view">
+            {% include "list-view.svg" %}
+          </button>
+          <button class="view-btn" data-view="grid" aria-label="Grid view">
+            {% include "grid-view.svg" %}
+          </button>
+        </div>
       </div>
 
-      <div class="cards-container">
+      <div class="cards-container symbols-container">
       {% for group in symbols %}
         <div class="symbol-card">
           <h2 class="archivo-black-regular">{{ group.name }}</h2>
@@ -61,6 +71,27 @@ permalink: index.html
               {% endfor %}
             </div>
           {% endif %}
+        </div>
+      {% endfor %}
+      </div>
+
+      <div class="cards-container search-container">
+      {% for group in search %}
+        <div class="search-card">
+          <h2 class="archivo-black-regular">{{ group.name }}</h2>
+          <div class="search-items">
+            {% for item in group.items %}
+              <div class="search-item">
+                <div class="search-row">
+                  <span class="search-name">{{ item.name }}</span>
+                  <button class="search-compact-copy" value="{{ item.string }}" aria-label="Copy">
+                    {% include "copy.svg" %}
+                  </button>
+                </div>
+                <input type="button" value="{{ item.string }}" class="copy-btn search-code-copy" title="Click to copy" />
+              </div>
+            {% endfor %}
+          </div>
         </div>
       {% endfor %}
       </div>
