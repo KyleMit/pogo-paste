@@ -100,26 +100,19 @@ body.section-search .content-wrapper {
   opacity: 0.8;
 }
 
-/* Active states based on body class and data attribute */
-body:not(.grid-view) .view-btn[data-view="list"],
-body.grid-view .view-btn[data-view="grid"] {
+/* Active states — body class drives highlight, data-toggle-value scopes to the right button */
+body:not(.grid-view) .view-btn[data-toggle-value="list"],
+body.grid-view .view-btn[data-toggle-value="grid"],
+body:not(.section-search) .section-btn[data-toggle-value="symbols"],
+body.section-search .section-btn[data-toggle-value="search"] {
   background: linear-gradient(180deg, #e8f4f8 0%, #d0e8f0 100%);
   border-color: #2a75bb;
 }
 
-body:not(.grid-view) .view-btn[data-view="list"] svg,
-body.grid-view .view-btn[data-view="grid"] svg {
-  opacity: 1;
-}
-
-body:not(.section-search) .section-btn[data-section="symbols"],
-body.section-search .section-btn[data-section="search"] {
-  background: linear-gradient(180deg, #e8f4f8 0%, #d0e8f0 100%);
-  border-color: #2a75bb;
-}
-
-body:not(.section-search) .section-btn[data-section="symbols"] svg,
-body.section-search .section-btn[data-section="search"] svg {
+body:not(.grid-view) .view-btn[data-toggle-value="list"] svg,
+body.grid-view .view-btn[data-toggle-value="grid"] svg,
+body:not(.section-search) .section-btn[data-toggle-value="symbols"] svg,
+body.section-search .section-btn[data-toggle-value="search"] svg {
   opacity: 1;
 }
 

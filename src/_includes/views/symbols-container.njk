@@ -1,0 +1,34 @@
+<div class="cards-container symbols-container">
+{% for group in symbols %}
+  <div class="symbol-card">
+    <h2 class="archivo-black-regular">{{ group.name }}</h2>
+    {% if group.name == "Numbers" %}
+      <div class="numbers-grid">
+        {% for item in group.items %}
+          <input type="button" value="{{ item.symbol }}" class="copy-btn numbers-btn" title="{{ item.name }}" />
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="symbol-items">
+        {% for item in group.items %}
+          <div class="symbol-row">
+            <div class="symbol-label">
+              <div class="type-container">
+                {% if item.icon %}
+                  <img src="static/images/{{ item.icon }}" alt="{{ item.name }} icon" class="type-icon">
+                {% endif %}
+                <div class="{{ item.className }}">
+                  {{ item.name }}
+                </div>
+              </div>
+            </div>
+            <div class="symbol-button">
+              <input type="button" value="{{ item.symbol }}" class="copy-btn" />
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+{% endfor %}
+</div>

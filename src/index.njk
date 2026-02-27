@@ -10,7 +10,7 @@ permalink: index.html
   <title>PoGo Paste</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧢</text></svg>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>{% include "style.css" %}</style>
+  <style>{% include "styles/style.css" %}</style>
 </head>
 <body>
   <main>
@@ -21,80 +21,9 @@ permalink: index.html
     <div id="toast" class="toast hidden"></div>
 
     <div class="content-wrapper">
-      <div class="toolbar">
-        <div class="section-toggle">
-          <button class="section-btn" data-section="symbols" aria-label="Symbols view">
-            {% include "symbol.svg" %}
-          </button>
-          <button class="section-btn" data-section="search" aria-label="Search strings view">
-            {% include "search.svg" %}
-          </button>
-        </div>
-        <div class="view-toggle">
-          <button class="view-btn" data-view="list" aria-label="List view">
-            {% include "list-view.svg" %}
-          </button>
-          <button class="view-btn" data-view="grid" aria-label="Grid view">
-            {% include "grid-view.svg" %}
-          </button>
-        </div>
-      </div>
-
-      <div class="cards-container symbols-container">
-      {% for group in symbols %}
-        <div class="symbol-card">
-          <h2 class="archivo-black-regular">{{ group.name }}</h2>
-          {% if group.name == "Numbers" %}
-            <div class="numbers-grid">
-              {% for item in group.items %}
-                <input type="button" value="{{ item.symbol }}" class="copy-btn numbers-btn" title="{{ item.name }}" />
-              {% endfor %}
-            </div>
-          {% else %}
-            <div class="symbol-items">
-              {% for item in group.items %}
-                <div class="symbol-row">
-                  <div class="symbol-label">
-                    <div class="type-container">
-                      {% if item.icon %}
-                        <img src="static/images/{{ item.icon }}" alt="{{ item.name }} icon" class="type-icon">
-                      {% endif %}
-                      <div class="{{item.className}}">
-                        {{ item.name }}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="symbol-button">
-                    <input type="button" value="{{ item.symbol }}" class="copy-btn" />
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
-          {% endif %}
-        </div>
-      {% endfor %}
-      </div>
-
-      <div class="cards-container search-container">
-      {% for group in search %}
-        <div class="search-card">
-          <h2 class="archivo-black-regular">{{ group.name }}</h2>
-          <div class="search-items">
-            {% for item in group.items %}
-              <div class="search-item">
-                <div class="search-row">
-                  <span class="search-name">{{ item.name }}</span>
-                  <button class="search-compact-copy" value="{{ item.string }}" aria-label="Copy">
-                    {% include "copy.svg" %}
-                  </button>
-                </div>
-                <input type="button" value="{{ item.string }}" class="copy-btn search-code-copy" title="Click to copy" />
-              </div>
-            {% endfor %}
-          </div>
-        </div>
-      {% endfor %}
-      </div>
+      {% include "views/toolbar.njk" %}
+      {% include "views/symbols-container.njk" %}
+      {% include "views/search-container.njk" %}
     </div>
   </main>
 
@@ -104,6 +33,10 @@ permalink: index.html
     </a>
   </footer>
 
-  <script>{% include "script.js" %}</script>
+  <script>
+    {% include "scripts/toggle.js" %}
+    {% include "scripts/copy.js" %}
+  </script>
+  
 </body>
 </html>

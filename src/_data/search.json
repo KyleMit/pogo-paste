@@ -18,6 +18,13 @@
       { "name": "GBL perfect IVs", "string": "0attack&4defense&4hp" },
       { "name": "GBL good IVs", "string": "0-1attack&2-4defense&2-4hp" },
       { "name": "Silver Bottle Cap", "string": "!4*&!shadow&4attack,4defense&4attack,4hp&4defense,4hp" },
+      { "name": "Nundo", "string": "0attack&0defense&0hp" }
+
+    ]
+  },
+    {
+    "name": "Pokemon",
+    "items": [
       { "name": "Walk to evolve", "string": "evolvenew&candykm1" }
     ]
   }
