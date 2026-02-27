@@ -5,6 +5,36 @@
 Sets up easily copyable characters to use when naming pokemon or using long filter strings
 
 
+## Dev Overview
+
+**Stack:** [Eleventy](https://www.11ty.dev/) static site generator, Nunjucks templates, vanilla JS, plain CSS. No build pipeline beyond Eleventy itself.
+
+### Structure
+
+```none
+src/
+  index.njk           # single page entry point
+  _data/
+    symbols.json      # symbol groups and characters
+    search.json       # search string entries
+  _includes/
+    views/            # toolbar, symbols, and search section templates
+    scripts/          # toggle.js, copy.js (inlined at build time)
+    styles/           # style.css (inlined at build time)
+    icons/            # SVG icons (included inline via {% include %})
+  static/             # passthrough-copied assets (images)
+```
+
+### Dev Notes
+
+* Eleventy builds a single `index.html`. 
+* JS and CSS are inlined via `{% include %}`
+* No external requests except the Google Fonts import.
+* Content lives in `_data/*.json` and is looped over in the Nunjucks templates.
+* UI state (section and view mode) is managed by toggle script that
+  * persists to `localStorage` and
+  * applies classes to `<body>` which are used CSS selectors use to show/hide and style sections.
+
 ## Prior Art
 
 * Docs
