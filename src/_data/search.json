@@ -2,14 +2,16 @@
   {
     "name": "Tagging",
     "items": [
-      { "name": "Tag as mega", "string": "!#mega&mega1-" },
-      { "name": "Tag as unmega", "string": "!#unmega&mega0" },
+      { "name": "Tag as Mega", "string": "!#mega&mega1-" },
+      { "name": "Tag as Unmega", "string": "!#unmega&mega0" },
       { "name": "Tag as Max", "string": "!#max&maxmove1-" },
       { "name": "Tag as Tamed", "string": "!#tamed&shadow&!@frustration" },
       { "name": "Tag as Legacy", "string": "!#legacy&Year2016-2020" },
       { "name": "Tag as Distant", "string": "!#distant&distance100-" },
       { "name": "Tag as Favorite", "string": "!favorite&#tamed,4*,#gl,lucky,cp2700-" },
-      { "name": "Tag as Graveyard", "string": "traded&#*" }
+      { "name": "Tag as Graveyard", "string": "!#graveyard&traded&#*" },
+      { "name": "Tag as Special", "string": "!#special&@special&!shadow&!purified&!smeargle" },
+      { "name": "Has Second Move", "string": "!@3move" }
     ]
   },
   {
@@ -22,10 +24,21 @@
 
     ]
   },
-    {
+  {
+    "name": "Shadows",
+    "items": [
+      { "name": "Good Shadows", "string": "shadow&!#pur&!#grave&2*,3*" },
+      { "name": "Tag as Purify", "string": "shadow&!#purify&!favorite&!4*&!3*&+aron,+barboach,+bidoof,+ducklett,+dwebble,+foongus,+geodude,+ledyba,+magikarp,+patrat,+pidove,+poochyena,+purrloin,+rattata,+spoink,+starly,+wailmer,+weedle,+whismur,+zubat" },
+      { "name": "Tag as graveyard or toss", "string": "shadow&!#&0*,1*" }
+
+    ]
+  },
+  {
     "name": "Pokemon",
     "items": [
-      { "name": "Walk to evolve", "string": "evolvenew&candykm1" }
+      { "name": "Opportunities", "string": "evolve&evolvenew" },
+      { "name": "Sinnoh Stone", "string": "Porygon2,Murkrow,Electabuzz,Magmar,Rhydon,Togetic,Dusclops,Roselia,Aipom,Kirlia,Tangrowth,Yanmega,Mamoswine,Sneasel,Snorunt,Gliscor,Mismagius,Weavile,Lickilicky,Electivire,Magmortar,Magneton" },
+      { "name": "New evolve w/o Sinnoh Stone", "string": "evolvenew&evolve&!lick&!tange&!magmar&!aipom&!togetic&!murk&!misd&!glig&!dusc" }
     ]
   }
 ]
