@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="48" fill="#FFFFFF"/>
+
+  <path d="M 2 50 A 48 48 0 0 1 98 50 L 50 50 Z" fill="#ED1C24"/>
+
+  <ellipse cx="33" cy="19" rx="9" ry="5" fill="#FFDADA" transform="rotate(-40, 30, 28)"/>
+
+  <line x1="2" y1="50" x2="98" y2="50" stroke="black" stroke-width="4"/>
+
+  <circle cx="50" cy="50" r="48" stroke="black" stroke-width="4" fill="none"/>
+
+  <g>
+    <circle cx="50" cy="50" r="16" fill="#FFFFFF" stroke="black" stroke-width="4"/>
+    
+    <text x="50" y="50" font-family="Arial, sans-serif" font-weight="900" font-size="25" fill="black" text-anchor="middle" dominant-baseline="central">&amp;</text>
+  </g>
+</svg>
