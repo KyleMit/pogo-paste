@@ -113,7 +113,8 @@ class PogoImeService : InputMethodService(), PogoKeyboardView.Host {
 
     override fun switchBack() {
         val switched = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            switchToPreviousInputMethod()
+            // "Previous" is empty right after boot or an `adb ime set`; with two keyboards "next" is the other one.
+            switchToPreviousInputMethod() || switchToNextInputMethod(false)
         } else {
             val token = window?.window?.attributes?.token
             @Suppress("DEPRECATION")

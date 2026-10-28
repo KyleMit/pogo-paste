@@ -61,7 +61,7 @@ android {
     }
 
     testOptions {
-        unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true
     }
 }
 
@@ -76,4 +76,5 @@ androidComponents {
 dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.json:json:20180813")
+    testImplementation("org.robolectric:robolectric:4.14.1")
 }

@@ -15,6 +15,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityManager
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityNodeProvider
 import kotlin.math.max
@@ -47,7 +48,13 @@ class KeyGridView(
     private fun dp(v: Float) = v * density
 
     var sections: List<Section> = emptyList()
-        set(v) { field = v; requestLayout(); invalidate() }
+        set(v) {
+            field = v
+            a11yFocused = NO_ID
+            hovered = NO_ID
+            requestLayout()
+            invalidate()
+        }
 
     /** Print each key's description under the glyph. */
     var captions = false
@@ -221,8 +228,59 @@ class KeyGridView(
     }
 
     // --- Accessibility: one virtual node per key ---------------------------------------------
+    // Hand-rolled equivalent of AndroidX's ExploreByTouchHelper (we don't ship AndroidX):
+    // virtual nodes, accessibility focus, and hover hit-testing for touch exploration.
+
+    private var a11yFocused = NO_ID
+    private var hovered = NO_ID
+    private val a11yManager = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+
+    private fun describe(cell: Cell) =
+        if (cell.sym.name.isNotEmpty()) "${cell.sym.name}, ${cell.sym.symbol}" else cell.sym.symbol
+
+    private fun indexAt(x: Float, y: Float): Int {
+        val c = cellAt(x, y) ?: return NO_ID
+        return cells.indexOf(c)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun sendVirtualEvent(id: Int, type: Int) {
+        if (!a11yManager.isEnabled) return
+        val p = parent ?: return
+        val cell = cells.getOrNull(id) ?: return
+        val ev = AccessibilityEvent.obtain(type)
+        ev.packageName = context.packageName
+        ev.className = BUTTON
+        ev.contentDescription = describe(cell)
+        ev.setSource(this, id)
+        p.requestSendAccessibilityEvent(this, ev)
+    }
+
+    override fun dispatchHoverEvent(event: MotionEvent): Boolean {
+        if (!a11yManager.isEnabled || !a11yManager.isTouchExplorationEnabled) return super.dispatchHoverEvent(event)
+        when (event.action) {
+            MotionEvent.ACTION_HOVER_ENTER, MotionEvent.ACTION_HOVER_MOVE -> {
+                val id = indexAt(event.x, event.y)
+                setHovered(id)
+                return id != NO_ID || super.dispatchHoverEvent(event)
+            }
+            MotionEvent.ACTION_HOVER_EXIT -> {
+                if (hovered != NO_ID) { setHovered(NO_ID); return true }
+            }
+        }
+        return super.dispatchHoverEvent(event)
+    }
+
+    private fun setHovered(id: Int) {
+        if (id == hovered) return
+        val old = hovered
+        hovered = id
+        if (id != NO_ID) sendVirtualEvent(id, AccessibilityEvent.TYPE_VIEW_HOVER_ENTER)
+        if (old != NO_ID) sendVirtualEvent(old, AccessibilityEvent.TYPE_VIEW_HOVER_EXIT)
+    }
 
     private val a11y = object : AccessibilityNodeProvider() {
+        @Suppress("DEPRECATION")
         override fun createAccessibilityNodeInfo(virtualViewId: Int): AccessibilityNodeInfo? {
             if (virtualViewId == View.NO_ID) {
                 val info = AccessibilityNodeInfo.obtain(this@KeyGridView)
@@ -234,11 +292,11 @@ class KeyGridView(
             val info = AccessibilityNodeInfo.obtain(this@KeyGridView, virtualViewId)
             info.setParent(this@KeyGridView)
             info.packageName = context.packageName
-            info.className = "android.widget.Button"
-            info.contentDescription = if (cell.sym.name.isNotEmpty()) "${cell.sym.name}, ${cell.sym.symbol}" else cell.sym.symbol
+            info.className = BUTTON
+            info.contentDescription = describe(cell)
             val r = Rect()
             cell.rect.roundOut(r)
-            @Suppress("DEPRECATION") info.setBoundsInParent(r)
+            info.setBoundsInParent(r)
             val loc = IntArray(2)
             getLocationOnScreen(loc)
             r.offset(loc[0], loc[1])
@@ -246,10 +304,17 @@ class KeyGridView(
             info.isEnabled = true
             info.isVisibleToUser = true
             info.isClickable = true
+            info.isFocusable = true
             info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK)
             if (cell.sym.alternates.isNotEmpty()) {
                 info.isLongClickable = true
                 info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_LONG_CLICK)
+            }
+            if (a11yFocused == virtualViewId) {
+                info.isAccessibilityFocused = true
+                info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLEAR_ACCESSIBILITY_FOCUS)
+            } else {
+                info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_ACCESSIBILITY_FOCUS)
             }
             return info
         }
@@ -260,14 +325,38 @@ class KeyGridView(
             return when (action) {
                 AccessibilityNodeInfo.ACTION_CLICK -> {
                     listener.onKeyTap(cell.sym)
-                    sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED)
+                    sendVirtualEvent(virtualViewId, AccessibilityEvent.TYPE_VIEW_CLICKED)
                     true
                 }
-                AccessibilityNodeInfo.ACTION_LONG_CLICK -> { listener.onKeyLongPress(cell.sym); true }
+                AccessibilityNodeInfo.ACTION_LONG_CLICK -> {
+                    listener.onKeyLongPress(cell.sym)
+                    sendVirtualEvent(virtualViewId, AccessibilityEvent.TYPE_VIEW_LONG_CLICKED)
+                    true
+                }
+                AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS -> {
+                    if (a11yFocused == virtualViewId) return false
+                    val old = a11yFocused
+                    a11yFocused = virtualViewId
+                    if (old != NO_ID) sendVirtualEvent(old, AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUS_CLEARED)
+                    sendVirtualEvent(virtualViewId, AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED)
+                    invalidate()
+                    true
+                }
+                AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS -> {
+                    if (a11yFocused != virtualViewId) return false
+                    a11yFocused = NO_ID
+                    sendVirtualEvent(virtualViewId, AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUS_CLEARED)
+                    invalidate()
+                    true
+                }
                 else -> false
             }
         }
     }
 
     override fun getAccessibilityNodeProvider(): AccessibilityNodeProvider = a11y
+
+    private companion object {
+        const val BUTTON = "android.widget.Button"
+    }
 }

@@ -118,7 +118,7 @@ class SettingsActivity : Activity() {
         val layouts = listOf(
             Layout.COMPACT to ("Compact grid" to "Every symbol in one dense, scrollable grid. Most keys on screen; press a key to see its name."),
             Layout.CAPTIONED to ("Captioned" to "Larger keys with the description under each symbol, like the website."),
-            Layout.PAGED to ("Paged groups" to "One group at a time (Types, Stats, …) picked from a chip row. No scrolling."),
+            Layout.PAGED to ("Paged groups" to "One group at a time (Types, Stats, …) picked from a chip row. Keys stretch to fill, so most groups need no scrolling."),
         )
         for ((mode, label) in layouts) {
             layoutGroup.addView(RadioButton(this).apply {

@@ -231,11 +231,16 @@ class PogoKeyboardView(
                 val recent = recentSection()
                 val pages = listOfNotNull(recent?.let { KeyGridView.Section(null, it.items.take(Prefs.MAX_RECENTS)) to "Recent" }) +
                     catalog.symbols.map { KeyGridView.Section(null, it.items, it.dense) to it.name }
+                // fillHeight stretches rows to fit; when a group can't fit even at the minimum key
+                // height (short keyboard, big group) the scroller keeps the overflow reachable.
+                grid.fillHeight = contentHeight - dp(CHIP_ROW_DP)
+                val pageScroller = scroller(grid)
                 pagedPage(pages.map { it.second }) { i ->
                     grid.captions = true
                     grid.sections = listOf(pages[i].first)
-                    grid
-                }.also { grid.fillHeight = contentHeight - dp(CHIP_ROW_DP) }
+                    pageScroller.scrollTo(0, 0)
+                    pageScroller
+                }
             }
         }
     }
@@ -493,6 +498,8 @@ class PogoKeyboardView(
 
         val del = iconKey(R.drawable.ic_backspace, "Delete")
         del.setOnTouchListener(RepeatListener { host.haptic(del); host.deleteBackward() })
+        // Touch is fully handled above; this path is for TalkBack / switch access activation.
+        del.setOnClickListener { host.deleteBackward() }
         add(del, 1.5f)
 
         val enter = iconKey(R.drawable.ic_enter, "Enter", accent = true)
