@@ -98,6 +98,11 @@ data class Catalog(val symbols: List<SymGroup>, val searches: List<SearchGroup>)
                 val allSingles = parts.all { graphemes(it).size == 1 }
                 if (allSingles && parts.size > 1) {
                     for (p in parts) if (seen.add(p)) out += Sym(p, "")
+                } else if (isWordy(parts[0]) && parts.size > 1 && graphemes(parts.last()).size == 1 && !isWordy(parts.last())) {
+                    // Name written first ("Shiny ✨"): take the trailing symbol rather than the "S".
+                    val sym = parts.last()
+                    val name = line.substring(0, line.lastIndexOf(sym)).trim()
+                    if (seen.add(sym)) out += Sym(sym, name)
                 } else {
                     val first = graphemes(parts[0]).firstOrNull() ?: continue
                     val rest = line.substring(line.indexOf(first) + first.length).trim()
@@ -106,6 +111,9 @@ data class Catalog(val symbols: List<SymGroup>, val searches: List<SearchGroup>)
             }
             return out
         }
+
+        /** True for plain ASCII words/numbers ("Shiny", "100"), i.e. a name rather than a symbol. */
+        private fun isWordy(token: String) = token.isNotEmpty() && token.all { it.code < 128 && it.isLetterOrDigit() }
 
         /** User search strings, one per line: `Name | string`, or just `string`. */
         fun parseUserSearches(text: String): List<SearchEntry> =
@@ -120,8 +128,18 @@ data class Catalog(val symbols: List<SymGroup>, val searches: List<SearchGroup>)
                 }
             }.toList()
 
-        /** Splits text into user-perceived characters (handles surrogate pairs and combining marks). */
-        fun graphemes(text: String): List<String> {
+        /**
+         * Splits text into user-perceived characters (surrogate pairs, combining marks, emoji
+         * sequences). Blank clusters are dropped.
+         */
+        fun graphemes(text: String): List<String> = clusters(text).filter { it.isNotBlank() }
+
+        /**
+         * Every grapheme cluster in [text], blanks included. The platform BreakIterator is the base;
+         * on older runtimes (Android 7's ICU) it splits skin tones and ZWJ sequences (👍🏽 → 👍 + 🏽),
+         * so [mergeEmojiClusters] rejoins those. On current runtimes the merge is a no-op.
+         */
+        fun clusters(text: String): List<String> {
             if (text.isEmpty()) return emptyList()
             val it = BreakIterator.getCharacterInstance()
             it.setText(text)
@@ -129,13 +147,35 @@ data class Catalog(val symbols: List<SymGroup>, val searches: List<SearchGroup>)
             var start = it.first()
             var end = it.next()
             while (end != BreakIterator.DONE) {
-                val g = text.substring(start, end)
-                if (g.isNotBlank()) out += g
+                out += text.substring(start, end)
                 start = end
                 end = it.next()
             }
+            return mergeEmojiClusters(out)
+        }
+
+        /** Glues emoji continuation pieces onto the preceding cluster. */
+        fun mergeEmojiClusters(parts: List<String>): List<String> {
+            val out = ArrayList<String>(parts.size)
+            for (p in parts) {
+                val prev = out.lastOrNull()
+                if (prev != null && (continuesCluster(p.codePointAt(0)) || prev.codePointBefore(prev.length) == ZWJ)) {
+                    out[out.size - 1] = prev + p
+                } else {
+                    out += p
+                }
+            }
             return out
         }
+
+        private const val ZWJ = 0x200D
+
+        private fun continuesCluster(cp: Int) =
+            cp == ZWJ ||
+                cp in 0xFE00..0xFE0F || // variation selectors (emoji / text presentation)
+                cp in 0x1F3FB..0x1F3FF || // skin-tone modifiers
+                cp in 0xE0020..0xE007F || // tag sequences (subdivision flags)
+                cp == 0x20E3 // combining enclosing keycap
     }
 
     /** Applies user customization: a "Mine" group first, hidden groups removed. */

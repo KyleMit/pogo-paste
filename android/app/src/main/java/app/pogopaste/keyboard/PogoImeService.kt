@@ -11,7 +11,6 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import java.text.BreakIterator
 
 class PogoImeService : InputMethodService(), PogoKeyboardView.Host {
 
@@ -176,14 +175,7 @@ class PogoImeService : InputMethodService(), PogoKeyboardView.Host {
         }
 
         /** Length in UTF-16 units of the last user-perceived character in [text]. */
-        fun lastGraphemeLength(text: CharSequence): Int {
-            if (text.isEmpty()) return 0
-            val s = text.toString()
-            val it = BreakIterator.getCharacterInstance()
-            it.setText(s)
-            val end = it.last()
-            val start = it.previous()
-            return if (start == BreakIterator.DONE) s.length else end - start
-        }
+        fun lastGraphemeLength(text: CharSequence): Int =
+            Catalog.clusters(text.toString()).lastOrNull()?.length ?: 0
     }
 }

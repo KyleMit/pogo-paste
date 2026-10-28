@@ -141,11 +141,12 @@ class SettingsActivity : Activity() {
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(sb: SeekBar, p: Int, fromUser: Boolean) {
                     showHeight(Prefs.MIN_HEIGHT_DP + p * 4)
+                    // Save every user change: D-pad, keyboard and TalkBack adjustments never
+                    // produce a "stop tracking" callback. apply() is async and cheap.
+                    if (fromUser) prefs.heightDp = Prefs.MIN_HEIGHT_DP + p * 4
                 }
                 override fun onStartTrackingTouch(sb: SeekBar) {}
-                override fun onStopTrackingTouch(sb: SeekBar) {
-                    prefs.heightDp = Prefs.MIN_HEIGHT_DP + sb.progress * 4
-                }
+                override fun onStopTrackingTouch(sb: SeekBar) {}
             })
         })
 

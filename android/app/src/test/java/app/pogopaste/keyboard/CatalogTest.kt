@@ -54,6 +54,14 @@ class CatalogTest {
     }
 
     @Test
+    fun `user symbols tolerate the name written first`() {
+        val s = Catalog.parseUserSymbols("Shiny ✨\nBest buddy ♛\nA B")
+        assertEquals(listOf("✨", "♛", "A", "B"), s.map { it.symbol })
+        assertEquals("Shiny", s[0].name)
+        assertEquals("Best buddy", s[1].name)
+    }
+
+    @Test
     fun `user searches accept name pipe string or bare string`() {
         val s = Catalog.parseUserSearches("Raid | 4*,3*&cp2500-\nshiny&!traded\nEmpty |  \n | nameless")
         assertEquals(3, s.size)
@@ -99,5 +107,29 @@ class JoinTest {
         assertEquals("", PogoImeService.joinPrefix("shiny,"))
         assertEquals("", PogoImeService.joinPrefix("!"))
         assertEquals("", PogoImeService.joinPrefix("a "))
+    }
+}
+
+/** Simulates Android 7's ICU, which splits emoji sequences, by feeding pre-split pieces. */
+class EmojiMergeTest {
+    @Test
+    fun `rejoins skin tones, ZWJ sequences, keycaps and variation selectors`() {
+        assertEquals(listOf("👍🏽"), Catalog.mergeEmojiClusters(listOf("👍", "🏽")))
+        assertEquals(listOf("👩🏽‍💻"), Catalog.mergeEmojiClusters(listOf("👩", "🏽‍", "💻")))
+        assertEquals(listOf("👨‍👩‍👧‍👦"), Catalog.mergeEmojiClusters(listOf("👨‍", "👩‍", "👧‍", "👦")))
+        assertEquals(listOf("1️⃣"), Catalog.mergeEmojiClusters(listOf("1", "️", "⃣")))
+        assertEquals(listOf("❤️"), Catalog.mergeEmojiClusters(listOf("❤", "️")))
+    }
+
+    @Test
+    fun `leaves ordinary neighbours alone`() {
+        assertEquals(listOf("★", " ", "☆"), Catalog.mergeEmojiClusters(listOf("★", " ", "☆")))
+        assertEquals(listOf("🇺🇸", "🇨🇦"), Catalog.mergeEmojiClusters(listOf("🇺🇸", "🇨🇦")))
+    }
+
+    @Test
+    fun `backspace length covers whole emoji sequences`() {
+        assertEquals(4, PogoImeService.lastGraphemeLength("a👍🏽"))
+        assertEquals(11, PogoImeService.lastGraphemeLength("👨‍👩‍👧‍👦"))
     }
 }
