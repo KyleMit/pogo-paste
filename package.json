@@ -6,7 +6,13 @@
   "scripts": {
     "start": "npx @11ty/eleventy --serve",
     "build": "npx @11ty/eleventy",
-    "clean": "rm -rf ./_site"
+    "clean": "rm -rf ./_site",
+    "rival:health": "node .claude/skills/run-rival-agent/scripts/codex-health.mjs",
+    "rival:launch": "node .claude/skills/run-rival-agent/scripts/launch-codex.mjs",
+    "rival:next": "node tools/rival-agent/broker.mjs next",
+    "rival:reply": "node tools/rival-agent/broker.mjs reply",
+    "rival:status": "node tools/rival-agent/broker.mjs status",
+    "rival:post": "node tools/rival-agent/post-review.mjs"
   },
   "dependencies": {
     "@11ty/eleventy": "^3.1.2"
