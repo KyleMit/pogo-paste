@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Back up settings and custom symbols/strings so they survive a phone migration. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="sharedpref" path="pogo_keyboard.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="sharedpref" path="pogo_keyboard.xml" />
+    </device-transfer>
+</data-extraction-rules>

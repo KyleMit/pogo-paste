@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Pogo" parent="android:Theme.Material.NoActionBar">
+        <item name="android:colorAccent">#6CA6E0</item>
+        <item name="android:colorPrimary">#6CA6E0</item>
+    </style>
+</resources>
