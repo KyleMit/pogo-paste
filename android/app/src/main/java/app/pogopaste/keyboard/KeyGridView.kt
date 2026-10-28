@@ -88,7 +88,7 @@ class KeyGridView(
         color = palette.subtext
         letterSpacing = 0.06f
     }
-    private val textBounds = Rect()
+    private val fontMetrics = Paint.FontMetrics()
 
     private val gap = dp(4f)
     private val radius = dp(6f)
@@ -167,9 +167,12 @@ class KeyGridView(
             val glyphSize = min(cell.rect.height() * if (hasCaption) 0.42f else 0.5f, dp(26f))
             glyphPaint.textSize = glyphSize
             glyphPaint.color = fg
-            glyphPaint.getTextBounds(sym.symbol, 0, sym.symbol.length, textBounds)
             val glyphCenterY = if (hasCaption) cell.rect.top + cell.rect.height() * 0.40f else cell.rect.centerY()
-            canvas.drawText(sym.symbol, cell.rect.centerX(), glyphCenterY - textBounds.exactCenterY(), glyphPaint)
+            // Center the line box, not the glyph's ink: superscripts (ᴬ) and low marks then sit
+            // where they will in the text field, instead of looking like plain capitals.
+            glyphPaint.getFontMetrics(fontMetrics)
+            val baseline = glyphCenterY - (fontMetrics.ascent + fontMetrics.descent) / 2f
+            canvas.drawText(sym.symbol, cell.rect.centerX(), baseline, glyphPaint)
             if (hasCaption) {
                 captionPaint.color = if (sym.color != null) 0xE6FFFFFF.toInt() else palette.subtext
                 canvas.drawText(cell.caption, 0, cell.caption.length, cell.rect.centerX(), cell.rect.bottom - dp(7f), captionPaint)
