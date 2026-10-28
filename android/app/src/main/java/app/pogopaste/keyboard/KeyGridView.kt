@@ -39,6 +39,12 @@ class KeyGridView(
         fun onKeyTap(sym: Sym)
         fun onKeyLongPress(sym: Sym)
         fun onKeyRelease()
+
+        /** After a long-press, the finger keeps moving (screen coordinates) — slide-to-pick. */
+        fun onLongPressDrag(rawX: Float, rawY: Float) {}
+
+        /** After a long-press, the finger lifted. */
+        fun onLongPressRelease(rawX: Float, rawY: Float) {}
     }
 
     /** [maxRows] > 0 truncates the section to that many rows at whatever column count fits. */
@@ -94,7 +100,12 @@ class KeyGridView(
     private var downY = 0f
     private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
     private val longPressRunnable = Runnable {
-        pressed?.let { longPressed = true; listener.onKeyLongPress(it.sym) }
+        pressed?.let {
+            longPressed = true
+            // Keep the scroller from stealing the slide up into the alternates strip.
+            parent?.requestDisallowInterceptTouchEvent(true)
+            listener.onKeyLongPress(it.sym)
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -195,7 +206,8 @@ class KeyGridView(
             }
             MotionEvent.ACTION_MOVE -> {
                 val p = pressed ?: return true
-                if (!longPressed && (Math.abs(e.x - downX) > touchSlop || Math.abs(e.y - downY) > touchSlop)) {
+                if (longPressed) listener.onLongPressDrag(e.rawX, e.rawY)
+                else if ((Math.abs(e.x - downX) > touchSlop || Math.abs(e.y - downY) > touchSlop)) {
                     if (cellAt(e.x, e.y) !== p) clearPress(notify = true)
                 }
             }
@@ -206,6 +218,8 @@ class KeyGridView(
                 if (p != null && !wasLong) {
                     playSoundEffect(android.view.SoundEffectConstants.CLICK)
                     listener.onKeyTap(p.sym)
+                } else if (p != null) {
+                    listener.onLongPressRelease(e.rawX, e.rawY)
                 }
             }
             MotionEvent.ACTION_CANCEL -> clearPress(notify = !longPressed)

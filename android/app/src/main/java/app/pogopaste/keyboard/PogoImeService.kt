@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.inputmethodservice.InputMethodService
 import android.os.Build
+import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
 import android.view.View
@@ -38,13 +39,17 @@ class PogoImeService : InputMethodService(), PogoKeyboardView.Host {
     }
 
     override fun onCreateInputView(): View {
+        val start = System.nanoTime()
         dirty = false
         val catalog = baseCatalog.customized(
             Catalog.parseUserSymbols(prefs.userSymbols),
             Catalog.parseUserSearches(prefs.userSearches),
             prefs.hidden,
         )
-        return PogoKeyboardView(this, this, catalog, prefs).also { keyboard = it }
+        return PogoKeyboardView(this, this, catalog, prefs).also {
+            keyboard = it
+            if (BuildConfig.DEBUG) Log.d(TAG, "onCreateInputView ${(System.nanoTime() - start) / 1000} µs")
+        }
     }
 
     override fun onStartInputView(info: EditorInfo, restarting: Boolean) {
@@ -143,6 +148,8 @@ class PogoImeService : InputMethodService(), PogoKeyboardView.Host {
     private fun imm() = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
     companion object {
+        private const val TAG = "PogoIme"
+
         /** Enough context to find the last grapheme even for long ZWJ emoji sequences. */
         private const val MAX_GRAPHEME_CHARS = 32
 

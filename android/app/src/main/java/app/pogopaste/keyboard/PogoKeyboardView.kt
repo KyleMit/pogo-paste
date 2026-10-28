@@ -213,12 +213,49 @@ class PogoKeyboardView(
         }
 
         override fun onKeyRelease() {}
+
+        override fun onLongPressDrag(rawX: Float, rawY: Float) {
+            setSlideTarget(altKeyAt(rawX, rawY))
+        }
+
+        override fun onLongPressRelease(rawX: Float, rawY: Float) {
+            val target = altKeyAt(rawX, rawY)
+            setSlideTarget(null)
+            // Lifting over an alternate inserts it; lifting anywhere else leaves the strip open to tap.
+            target?.performClick()
+        }
+    }
+
+    private var slideTarget: View? = null
+    private val tmpLoc = IntArray(2)
+
+    private fun setSlideTarget(v: View?) {
+        if (v === slideTarget) return
+        slideTarget?.isPressed = false
+        slideTarget = v
+        if (v != null) {
+            v.isPressed = true
+            host.haptic(v)
+        }
+    }
+
+    /** The alternate under the finger, if it has slid up into (or just below) the strip. */
+    private fun altKeyAt(rawX: Float, rawY: Float): View? {
+        if (altBar.visibility != VISIBLE) return null
+        altBar.getLocationOnScreen(tmpLoc)
+        if (rawY > tmpLoc[1] + altBar.height + dp(SLIDE_SLOP_DP)) return null
+        for (i in 0 until altKeys.childCount) {
+            val c = altKeys.getChildAt(i)
+            c.getLocationOnScreen(tmpLoc)
+            if (rawX >= tmpLoc[0] && rawX < tmpLoc[0] + c.width) return c
+        }
+        return null
     }
 
     private fun describe(sym: Sym): String = buildString {
         append(sym.symbol)
         if (sym.name.isNotEmpty()) append("  ").append(sym.name)
-        if (sym.alternates.isNotEmpty()) append("  · hold for ").append(sym.alternates.size).append(" more")
+        if (sym.alternates.isNotEmpty()) append("  · hold & slide for ").append(sym.alternates.size).append(" more")
     }
 
     private fun recentSection(): KeyGridView.Section? {
@@ -472,6 +509,7 @@ class PogoKeyboardView(
     }
 
     private fun hideAlternates() {
+        setSlideTarget(null)
         altBar.visibility = GONE
         normalBar.visibility = VISIBLE
     }
@@ -592,6 +630,8 @@ class PogoKeyboardView(
 
     companion object {
         private const val CHIP_ROW_DP = 34
+        /** How far below the strip a sliding finger still counts as "on" it. */
+        private const val SLIDE_SLOP_DP = 24
         /** Top bar (42) + bottom row (50). */
         private const val BARS_DP = 92
         private const val MIN_CONTENT_DP = 96

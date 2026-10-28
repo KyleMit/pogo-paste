@@ -28,7 +28,7 @@ app (Files, Drive, …) once.
 | Where       | What                                                                                     |
 | ----------- | ---------------------------------------------------------------------------------------- |
 | Top bar     | **Symbols** / **Search** tabs. Press a key to see its name here. ⚙ opens settings.      |
-| Symbols     | Tap to insert. **Long-press** a key with alternates (e.g. Psychic has 8) to pick one.    |
+| Symbols     | Tap to insert. **Hold** a key to show its alternates (Psychic has 8), then slide up onto one and lift, or tap one. |
 | Search      | Tap a string to insert it. Long-press to read the whole string. Top strip: `# @ + * :` and digits. |
 | Bottom row  | 🌐 back to your keyboard · `& , ! -` · space · ⌫ (hold to repeat) · Enter/Search        |
 
@@ -52,6 +52,8 @@ second search string adds `&` first. In Pokémon GO `&` binds loosest, so `a,b&c
 ## Layouts
 
 Pick one in Settings › Layout. Each applies to both tabs.
+
+![Compact, Captioned and Paged layouts: Symbols tab on top, Search tab below](docs/layouts.png)
 
 | Layout           | Symbols                                                                      | Search strings                                  |
 | ---------------- | ---------------------------------------------------------------------------- | ----------------------------------------------- |
