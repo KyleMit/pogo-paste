@@ -4,6 +4,8 @@
 
 Sets up easily copyable characters to use when naming pokemon or using long filter strings
 
+**Android keyboard:** the same symbols and search strings as a native Android keyboard. See [`android/README.md`](android/README.md).
+
 
 ## Dev Overview
 
@@ -30,7 +32,7 @@ src/
 * Eleventy builds a single `index.html`. 
 * JS and CSS are inlined via `{% include %}`
 * No external requests except the Google Fonts import.
-* Content lives in `_data/*.json` and is looped over in the Nunjucks templates.
+* Content lives in `_data/*.json` and is looped over in the Nunjucks templates. The Android keyboard bundles the same files, so edits there ship to both.
 * UI state (section and view mode) is managed by toggle script that
   * persists to `localStorage` and
   * applies classes to `<body>` which are used CSS selectors use to show/hide and style sections.

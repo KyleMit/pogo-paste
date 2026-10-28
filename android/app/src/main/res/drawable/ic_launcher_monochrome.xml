@@ -1,0 +1,7 @@
+<!-- Themed-icon (Android 13+) silhouette: ring, band and button of the logo as one tintable shape. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="174" android:viewportHeight="174">
+    <path android:strokeColor="#FF000000" android:strokeWidth="6" android:pathData="M87,39a48,48 0 1,1 0,96a48,48 0 1,1 0,-96z"/>
+    <path android:fillColor="#FF000000" android:pathData="M39,87A48,48 0 0,1 135,87L103,87A16,16 0 0,0 71,87Z"/>
+    <path android:strokeColor="#FF000000" android:strokeWidth="5" android:pathData="M39,87L71,87M103,87L135,87M71,87a16,16 0 1,0 32,0a16,16 0 1,0 -32,0z"/>
+    <path android:fillColor="#FF000000" android:pathData="M87,78Q88.5,85.5 96,87Q88.5,88.5 87,96Q85.5,88.5 78,87Q85.5,85.5 87,78z"/>
+</vector>
