@@ -8,8 +8,9 @@ and/or the Codex rival reviewer), or **not verified**.
 
 Good for daily sideloaded use, with one real unknown: it hasn't been tried inside Pokémon GO
 itself (see "Not verified"). The app is small, has no dependencies or permissions, and survived
-two independent Codex review rounds. Round 1 found three real bugs, all fixed with regression
-tests; round 2 found nothing new.
+three Codex review rounds. Round 1 found three real bugs, round 2 found none, and round 3 found
+three bugs in the new slide gesture plus three overstated claims in this report. All are fixed;
+every code fix has a regression test.
 
 ## Footprint (measured)
 
@@ -35,7 +36,8 @@ the keyboard's ~50–90 live Views and a 7 KB parsed catalog.
   settings change, or when recents changed and you're on the Symbols tab.
 * **Drawing:** the symbol grid is a single Canvas View, not ~70 child Views. `onDraw` allocates
   nothing; text measurement and ellipsizing happen at layout time.
-* **Data:** the 7 KB of JSON is parsed once per process, lazily.
+* **Data:** the 7 KB of JSON is parsed once per process, on first use, and shared by the
+  keyboard and the settings screen.
 * **Frame timing** from the emulator (software GPU) isn't meaningful and wasn't used as evidence.
   To measure on a real phone: `adb shell dumpsys gfxinfo app.pogopaste.keyboard reset`, use the
   keyboard, then run `dumpsys gfxinfo` again.
@@ -47,8 +49,16 @@ the keyboard's ~50–90 live Views and a 7 KB parsed catalog.
 * **Unicode-safe.** Alternates and user symbols split by grapheme, so surrogate pairs, emoji and
   combining marks work (unit-tested). Backspace deletes one whole grapheme, replaces a selection
   if there is one, and falls back to a `DEL` key event for editors that hide their text.
-* **Null or slow `InputConnection`:** every commit and delete path checks for it. Codex added 21
-  temporary Robolectric checks for these paths in round 2, and all passed.
+* **Null `InputConnection`:** every commit and delete path checks for it. Codex added 21
+  temporary Robolectric checks in round 2 (null connections, selection replacement, null editor
+  text), and all passed.
+* **Slow editors: not handled specially.** Backspace and `&` joining read the text before the
+  cursor, which is a synchronous IPC. Codex measured an editor that answers in 150 ms blocking the
+  key for that long. Every keyboard pays this cost, and normal editors answer in a few ms, but it
+  hasn't been profiled inside Pokémon GO.
+* **Slide-to-pick:** only the finger that started the press can finish it. Only an alternate
+  that's actually visible in the strip, and under or just below it, can be picked. A cancelled
+  gesture inserts nothing and clears its highlight. Covered by Robolectric tests.
 * **Lifecycle:** backspace auto-repeat and the long-press timer stop when the view detaches or the
   press ends, so nothing can type into the next field. Settings changed mid-session apply on the
   next fresh show, never mid-typing.
@@ -58,8 +68,8 @@ the keyboard's ~50–90 live Views and a 7 KB parsed catalog.
 * **Edge-to-edge (Android 15+):** the keyboard pads for the nav bar using typed insets, and the
   settings screen pads for system bars and the keyboard.
 * **Landscape:** the keyboard is capped at ~55% of screen height so the text field stays visible.
-* **Switching:** 🌐 calls `switchToPreviousInputMethod`. If there's no history it falls back to
-  "next keyboard", then to the picker. A full Gboard → Pogo → Gboard round trip was verified on
+* **Switching:** 🌐 goes to the previous keyboard. On Android 9+ it falls back to "next keyboard"
+  and then the picker when there's no history; on 7–8 it falls back straight to the picker. A full Gboard → Pogo → Gboard round trip was verified on
   API 36 (one tap each way) and on API 24 (legacy token path).
 * **Accessibility:** every key is a TalkBack virtual node with focus, click, long-click and hover
   hit-testing, and Delete is clickable. Covered by Robolectric tests on API 24/28/35, but not yet
@@ -67,9 +77,10 @@ the keyboard's ~50–90 live Views and a 7 KB parsed catalog.
 
 ## Tests
 
-* 24 JVM/Robolectric tests across API 24, 28 and 35. They cover data parsing, user entries,
-  grapheme handling, `&` joining, every layout × tab building, paged overflow, accessibility
-  focus/click and the Delete click.
+* 36 JVM/Robolectric test runs (the Robolectric suites run on API 24, 28 and 35). They cover data
+  parsing, user entries, grapheme handling, `&` joining, every layout × tab building, paged
+  overflow, accessibility focus/click, the Delete click, and slide-to-pick (commit, lift outside
+  the strip, second finger, cancel). The slide tests were confirmed to fail on the pre-fix code.
 * `lintDebug`: 0 errors. The 5 remaining warnings are version nags (newer Gradle, compileSdk 37,
   newer test libs).
 

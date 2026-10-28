@@ -19,8 +19,7 @@ class PogoImeService : InputMethodService(), PogoKeyboardView.Host {
     private var keyboard: PogoKeyboardView? = null
     private var dirty = false
 
-    /** The bundled data. Parsed once per process; it's ~7 KB so this is sub-millisecond. */
-    private val baseCatalog: Catalog by lazy { loadCatalog(this) }
+    private val baseCatalog: Catalog get() = loadCatalog(this)
 
     private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == null || key in Prefs.STRUCTURAL) dirty = true
@@ -153,11 +152,18 @@ class PogoImeService : InputMethodService(), PogoKeyboardView.Host {
         /** Enough context to find the last grapheme even for long ZWJ emoji sequences. */
         private const val MAX_GRAPHEME_CHARS = 32
 
+        @Volatile private var cachedCatalog: Catalog? = null
+
+        /**
+         * The bundled data, parsed once per process and shared by the keyboard and the settings
+         * screen. It's ~7 KB of immutable assets, so the cache never needs invalidating.
+         */
         fun loadCatalog(context: Context): Catalog {
+            cachedCatalog?.let { return it }
             fun read(name: String) = runCatching {
                 context.assets.open(name).bufferedReader(Charsets.UTF_8).use { it.readText() }
             }.getOrDefault("[]")
-            return Catalog.parse(read("symbols.json"), read("search.json"))
+            return Catalog.parse(read("symbols.json"), read("search.json")).also { cachedCatalog = it }
         }
 
         /**

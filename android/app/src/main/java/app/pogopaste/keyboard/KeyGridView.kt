@@ -45,6 +45,9 @@ class KeyGridView(
 
         /** After a long-press, the finger lifted. */
         fun onLongPressRelease(rawX: Float, rawY: Float) {}
+
+        /** After a long-press, the gesture was cancelled (or its finger left): commit nothing. */
+        fun onLongPressCancel() {}
     }
 
     /** [maxRows] > 0 truncates the section to that many rows at whatever column count fits. */
@@ -194,11 +197,22 @@ class KeyGridView(
         return null
     }
 
+    /** The finger that started the current press; other fingers are ignored. */
+    private var pointerId = MotionEvent.INVALID_POINTER_ID
+
+    /** Screen coordinates of the tracked finger in [e] (rawX/rawY only cover pointer 0 before API 29). */
+    private fun rawOf(e: MotionEvent, index: Int): Pair<Float, Float> {
+        val dx = e.rawX - e.x
+        val dy = e.rawY - e.y
+        return (e.getX(index) + dx) to (e.getY(index) + dy)
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(e: MotionEvent): Boolean {
         when (e.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 val c = cellAt(e.x, e.y) ?: return false
+                pointerId = e.getPointerId(0)
                 downX = e.x; downY = e.y
                 pressed = c
                 longPressed = false
@@ -209,23 +223,39 @@ class KeyGridView(
             }
             MotionEvent.ACTION_MOVE -> {
                 val p = pressed ?: return true
-                if (longPressed) listener.onLongPressDrag(e.rawX, e.rawY)
-                else if ((Math.abs(e.x - downX) > touchSlop || Math.abs(e.y - downY) > touchSlop)) {
-                    if (cellAt(e.x, e.y) !== p) clearPress(notify = true)
+                val i = e.findPointerIndex(pointerId)
+                if (i < 0) return true
+                val x = e.getX(i)
+                val y = e.getY(i)
+                if (longPressed) {
+                    val (rx, ry) = rawOf(e, i)
+                    listener.onLongPressDrag(rx, ry)
+                } else if (Math.abs(x - downX) > touchSlop || Math.abs(y - downY) > touchSlop) {
+                    if (cellAt(x, y) !== p) clearPress(notify = true)
                 }
             }
-            MotionEvent.ACTION_UP -> {
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                // Only the finger that started the press can finish it.
+                val i = e.actionIndex
+                if (e.getPointerId(i) != pointerId) return true
                 val p = pressed
                 val wasLong = longPressed
+                val (rx, ry) = rawOf(e, i)
+                pointerId = MotionEvent.INVALID_POINTER_ID
                 clearPress(notify = !wasLong)
                 if (p != null && !wasLong) {
                     playSoundEffect(android.view.SoundEffectConstants.CLICK)
                     listener.onKeyTap(p.sym)
                 } else if (p != null) {
-                    listener.onLongPressRelease(e.rawX, e.rawY)
+                    listener.onLongPressRelease(rx, ry)
                 }
             }
-            MotionEvent.ACTION_CANCEL -> clearPress(notify = !longPressed)
+            MotionEvent.ACTION_CANCEL -> {
+                val wasLong = longPressed && pressed != null
+                pointerId = MotionEvent.INVALID_POINTER_ID
+                clearPress(notify = !longPressed)
+                if (wasLong) listener.onLongPressCancel()
+            }
         }
         return true
     }

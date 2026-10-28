@@ -77,6 +77,7 @@ class PogoKeyboardView(
     private val altBar: LinearLayout
     private val altName: TextView
     private val altKeys: LinearLayout
+    private val altScroll: HorizontalScrollView
     private val content = FrameLayout(context)
     private var enterIcon: ImageView? = null
 
@@ -134,7 +135,7 @@ class PogoKeyboardView(
             setPadding(dp(4), 0, dp(6), 0)
         }
         altKeys = LinearLayout(context).apply { orientation = HORIZONTAL; gravity = Gravity.CENTER_VERTICAL }
-        val altScroll = HorizontalScrollView(context).apply {
+        altScroll = HorizontalScrollView(context).apply {
             isHorizontalScrollBarEnabled = false
             addView(altKeys)
         }
@@ -218,6 +219,10 @@ class PogoKeyboardView(
             setSlideTarget(altKeyAt(rawX, rawY))
         }
 
+        override fun onLongPressCancel() {
+            setSlideTarget(null)
+        }
+
         override fun onLongPressRelease(rawX: Float, rawY: Float) {
             val target = altKeyAt(rawX, rawY)
             setSlideTarget(null)
@@ -239,11 +244,20 @@ class PogoKeyboardView(
         }
     }
 
-    /** The alternate under the finger, if it has slid up into (or just below) the strip. */
+    /**
+     * The alternate under the finger: within the strip's height (plus a little slop below it, where
+     * the finger comes from) and within the strip's visible scroll viewport, so clipped keys and
+     * lifts far above the keyboard never insert anything.
+     */
     private fun altKeyAt(rawX: Float, rawY: Float): View? {
         if (altBar.visibility != VISIBLE) return null
         altBar.getLocationOnScreen(tmpLoc)
-        if (rawY > tmpLoc[1] + altBar.height + dp(SLIDE_SLOP_DP)) return null
+        val top = tmpLoc[1]
+        if (rawY < top || rawY > top + altBar.height + dp(SLIDE_SLOP_DP)) return null
+        altScroll.getLocationOnScreen(tmpLoc)
+        val viewLeft = tmpLoc[0]
+        val viewRight = viewLeft + altScroll.width
+        if (rawX < viewLeft || rawX >= viewRight) return null
         for (i in 0 until altKeys.childCount) {
             val c = altKeys.getChildAt(i)
             c.getLocationOnScreen(tmpLoc)
