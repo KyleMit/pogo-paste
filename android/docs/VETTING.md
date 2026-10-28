@@ -8,9 +8,10 @@ and/or the Codex rival reviewer), or **not verified**.
 
 Good for daily sideloaded use, with one real unknown: it hasn't been tried inside Pokémon GO
 itself (see "Not verified"). The app is small, has no dependencies or permissions, and survived
-four Codex review rounds. Round 1 found three real bugs, round 2 found none, round 3 found three
+five Codex review rounds. Round 1 found three real bugs, round 2 found none, round 3 found three
 bugs in the new slide gesture plus three overstated claims in this report, and a fresh reviewer in
-round 4 found two more (emoji on Android 7, height slider). All are fixed, and every code fix has a
+round 4 found two more (emoji on Android 7, height slider), and round 5 caught two regressions in
+those fixes (over-joining ZWJ text, misreading `1 Rank ★`). All are fixed, and every code fix has a
 regression test.
 
 ## Footprint (measured)
@@ -80,7 +81,7 @@ the keyboard's ~50–90 live Views and a 7 KB parsed catalog.
 
 ## Tests
 
-* 40 JVM/Robolectric test runs (the Robolectric suites run on API 24, 28 and 35). They cover data
+* 41 JVM/Robolectric test runs (the Robolectric suites run on API 24, 28 and 35). They cover data
   parsing, user entries, grapheme handling, `&` joining, every layout × tab building, paged
   overflow, accessibility focus/click, the Delete click, and slide-to-pick (commit, lift outside
   the strip, second finger, cancel). The slide tests were confirmed to fail on the pre-fix code.

@@ -98,8 +98,11 @@ data class Catalog(val symbols: List<SymGroup>, val searches: List<SearchGroup>)
                 val allSingles = parts.all { graphemes(it).size == 1 }
                 if (allSingles && parts.size > 1) {
                     for (p in parts) if (seen.add(p)) out += Sym(p, "")
-                } else if (isWordy(parts[0]) && parts.size > 1 && graphemes(parts.last()).size == 1 && !isWordy(parts.last())) {
+                } else if (parts.size > 1 && isWordy(parts[0]) && graphemes(parts[0]).size > 1 &&
+                    graphemes(parts.last()).size == 1 && !isWordy(parts.last())
+                ) {
                     // Name written first ("Shiny ✨"): take the trailing symbol rather than the "S".
+                    // A single-character first token ("1 Rank ★") stays symbol-first.
                     val sym = parts.last()
                     val name = line.substring(0, line.lastIndexOf(sym)).trim()
                     if (seen.add(sym)) out += Sym(sym, name)
@@ -154,12 +157,18 @@ data class Catalog(val symbols: List<SymGroup>, val searches: List<SearchGroup>)
             return mergeEmojiClusters(out)
         }
 
-        /** Glues emoji continuation pieces onto the preceding cluster. */
+        /**
+         * Glues emoji continuation pieces onto the preceding cluster. A ZWJ only joins two
+         * pictographs (👩 ZWJ 💻), as in Unicode's GB11 rule; ZWJ between letters ("a‍b", Arabic
+         * shaping) keeps the platform's boundary so backspace still deletes one letter.
+         */
         fun mergeEmojiClusters(parts: List<String>): List<String> {
             val out = ArrayList<String>(parts.size)
             for (p in parts) {
                 val prev = out.lastOrNull()
-                if (prev != null && (continuesCluster(p.codePointAt(0)) || prev.codePointBefore(prev.length) == ZWJ)) {
+                val joinsZwj = prev != null && prev.codePointBefore(prev.length) == ZWJ &&
+                    isPictographic(prev.codePointAt(0)) && isPictographic(p.codePointAt(0))
+                if (prev != null && (continuesCluster(p.codePointAt(0)) || joinsZwj)) {
                     out[out.size - 1] = prev + p
                 } else {
                     out += p
@@ -167,6 +176,12 @@ data class Catalog(val symbols: List<SymGroup>, val searches: List<SearchGroup>)
             }
             return out
         }
+
+        /** Close-enough Extended_Pictographic check for the blocks emoji live in. */
+        private fun isPictographic(cp: Int) =
+            cp in 0x1F000..0x1FAFF || cp in 0x2600..0x27BF || cp in 0x2300..0x23FF ||
+                cp in 0x2B00..0x2BFF || cp in 0x2190..0x21FF || cp == 0x00A9 || cp == 0x00AE ||
+                cp == 0x203C || cp == 0x2049 || cp == 0x2122 || cp == 0x2139 || cp == 0x3030 || cp == 0x303D
 
         private const val ZWJ = 0x200D
 

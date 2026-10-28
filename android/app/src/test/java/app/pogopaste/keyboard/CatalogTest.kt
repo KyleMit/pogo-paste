@@ -55,8 +55,9 @@ class CatalogTest {
 
     @Test
     fun `user symbols tolerate the name written first`() {
-        val s = Catalog.parseUserSymbols("Shiny ✨\nBest buddy ♛\nA B")
-        assertEquals(listOf("✨", "♛", "A", "B"), s.map { it.symbol })
+        val s = Catalog.parseUserSymbols("Shiny ✨\nBest buddy ♛\nA B\n1 Rank ★\nX Attack ⚔")
+        assertEquals(listOf("✨", "♛", "A", "B", "1", "X"), s.map { it.symbol })
+        assertEquals("Rank ★", s[4].name)
         assertEquals("Shiny", s[0].name)
         assertEquals("Best buddy", s[1].name)
     }
@@ -119,6 +120,14 @@ class EmojiMergeTest {
         assertEquals(listOf("👨‍👩‍👧‍👦"), Catalog.mergeEmojiClusters(listOf("👨‍", "👩‍", "👧‍", "👦")))
         assertEquals(listOf("1️⃣"), Catalog.mergeEmojiClusters(listOf("1", "️", "⃣")))
         assertEquals(listOf("❤️"), Catalog.mergeEmojiClusters(listOf("❤", "️")))
+    }
+
+    @Test
+    fun `ZWJ between letters keeps the platform boundary`() {
+        assertEquals(listOf("a\u200D", "b"), Catalog.mergeEmojiClusters(listOf("a\u200D", "b")))
+        assertEquals(listOf("ب\u200D", "ب"), Catalog.mergeEmojiClusters(listOf("ب\u200D", "ب")))
+        assertEquals(listOf("👩\u200D", "\n"), Catalog.mergeEmojiClusters(listOf("👩\u200D", "\n")))
+        assertEquals(1, PogoImeService.lastGraphemeLength("a\u200Db"))
     }
 
     @Test
