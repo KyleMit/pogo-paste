@@ -1,10 +1,12 @@
 package app.pogopaste.keyboard
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.ViewGroup
 import kotlin.math.max
 
 /** Wraps children onto new lines like text. Just enough for a row of chips. */
+@SuppressLint("ViewConstructor")
 class FlowLayout(context: Context, private val hGap: Int, private val vGap: Int) : ViewGroup(context) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

@@ -60,6 +60,11 @@ android {
         resources.excludes += setOf("META-INF/**", "kotlin/**", "**.kotlin_builtins", "DebugProbesKt.bin")
     }
 
+    lint {
+        // English-only UI built in code; revisit with string resources if it's ever translated.
+        disable += setOf("SetTextI18n")
+    }
+
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }

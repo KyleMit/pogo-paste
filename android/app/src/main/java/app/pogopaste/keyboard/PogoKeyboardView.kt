@@ -57,7 +57,18 @@ class PogoKeyboardView(
     private fun dp(v: Int) = (v * density + 0.5f).toInt()
 
     private val layoutMode = prefs.layout
-    private val contentHeight = dp(prefs.heightDp)
+    /**
+     * The preferred height, capped so that the whole keyboard (bars included) never takes more than
+     * ~55% of the screen — in landscape the preference alone would bury the text field.
+     */
+    private val contentHeight = run {
+        val screenDp = resources.configuration.screenHeightDp
+        val cap = if (screenDp > 0) (screenDp * 0.55f).toInt() - BARS_DP else prefs.heightDp
+        dp(prefs.heightDp.coerceAtMost(cap).coerceAtLeast(MIN_CONTENT_DP))
+    }
+
+    /** Recents as last rendered; the symbols page is rebuilt on show only when these changed. */
+    private var shownRecents: List<String> = emptyList()
 
     private val tabSymbols: TextView
     private val tabSearch: TextView
@@ -75,14 +86,13 @@ class PogoKeyboardView(
         orientation = VERTICAL
         setBackgroundColor(palette.background)
         // Insets: on Android 15+ the IME window is edge-to-edge, so pad for the nav bar ourselves.
-        setOnApplyWindowInsetsListener { v, insets ->
-            val bottom = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                insets.getInsets(WindowInsets.Type.navigationBars()).bottom
-            } else {
-                @Suppress("DEPRECATION") insets.systemWindowInsetBottom
+        // Typed insets (API 30+) report only real overlap. Before that the IME window always sits
+        // above the nav bar, and the legacy systemWindowInsetBottom over-reports it (blank strip on 7.x).
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            setOnApplyWindowInsetsListener { v, insets ->
+                v.setPadding(0, 0, 0, insets.getInsets(WindowInsets.Type.navigationBars()).bottom)
+                insets
             }
-            v.setPadding(0, 0, 0, bottom)
-            insets
         }
 
         // --- top bar -------------------------------------------------------------------------
@@ -151,9 +161,9 @@ class PogoKeyboardView(
             if (imeAction == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) R.drawable.ic_search
             else R.drawable.ic_enter,
         )
-        // Rebuild the symbols page so recents reflect the last session. Recents never reshuffle
-        // while the keyboard is open, so keys don't jump under a finger.
-        if (tab == 0) selectTab(0)
+        // Refresh recents from the last session. They never reshuffle while the keyboard is open,
+        // so keys don't jump under a finger; when unchanged, the page (and its scroll) is kept.
+        if (tab == 0 && prefs.showRecents && prefs.recents != shownRecents) selectTab(0)
     }
 
     // --- tabs ------------------------------------------------------------------------------------
@@ -213,7 +223,8 @@ class PogoKeyboardView(
 
     private fun recentSection(): KeyGridView.Section? {
         if (!prefs.showRecents) return null
-        val items = prefs.recents.map { catalog.findSymbol(it) ?: Sym(it, "") }
+        shownRecents = prefs.recents
+        val items = shownRecents.map { catalog.findSymbol(it) ?: Sym(it, "") }
         return if (items.isEmpty()) null else KeyGridView.Section("Recent", items, maxRows = 1)
     }
 
@@ -581,6 +592,9 @@ class PogoKeyboardView(
 
     companion object {
         private const val CHIP_ROW_DP = 34
+        /** Top bar (42) + bottom row (50). */
+        private const val BARS_DP = 92
+        private const val MIN_CONTENT_DP = 96
         private val OPERATORS = listOf("&", ",", "!", "-")
         private val SEARCH_KEYS = listOf("#", "@", "+", "*", ":", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0")
         private val OPERATOR_NAMES = mapOf(
